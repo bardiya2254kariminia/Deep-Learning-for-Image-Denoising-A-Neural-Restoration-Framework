@@ -1,6 +1,8 @@
 import torch
 import numpy as np
 from PIL import Image
+import os, sys
+import json
 
 
 def denormalize_image(img:torch.Tensor , mean = (0.5,0.5,0.5) , std = (0.5,0.5,0.5)):
@@ -12,3 +14,8 @@ def denormalize_image(img:torch.Tensor , mean = (0.5,0.5,0.5) , std = (0.5,0.5,0
     img = np.clip(img , 0,1)
     img = (img * 255).astype("uint8")
     return img
+
+def load_json(json_path:str):
+    with open(json_path ,"r") as f:
+        data = json.load(f)
+    return data
