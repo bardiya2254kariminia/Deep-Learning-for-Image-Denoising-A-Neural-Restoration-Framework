@@ -1,12 +1,14 @@
 {
     "mode" : "train",
     "epoches": 30,
-    "batch-size": 4,
+    "batch_size": 4,
     "learning_rate": 0.01,
     "train_size" : null,
     "device" : "cpu",
-    "num-workers": 1,
+    "num_workers": 1,
     "b1" : 0.5,
     "b2": 0.99,
-    "weight_decay" : 1e-3
+    "weight_decay" : 1e-3,
+    "model" : "U-net",
+    "load_weigth_path": null 
 }

@@ -45,11 +45,12 @@ class Unet_Convblock(nn.Module):
         return self.body(x)
 
 class Unet(nn.Module):
-    def __init__(self):
+    def __init__(self, opts):
         super(Unet,self).__init__()
         self.down1 = nn.Sequential(
             Unet_Convblock(in_channel=3,out_channel=64),
         )
+        self.opts = opts
         self.down2 = nn.Sequential(
             nn.MaxPool2d(kernel_size=2),
             Unet_Convblock(in_channel=64,out_channel=128)
@@ -83,7 +84,8 @@ class Unet(nn.Module):
             Unet_Convblock(in_channel=128,out_channel=64),
             nn.Conv2d(in_channels=64, out_channels=3,kernel_size=1)
         )
-    
+            
+
     def forward(self,x):
         out_down1 = self.down1(x)
         # print(f"{out_down1.shape=}")
@@ -103,10 +105,11 @@ class Unet(nn.Module):
 
 # VAE(variational auto encoder)[vectorwise format and cnn based]
 class VAE(nn.Module):
-    def __init__(self ,spatial = 32 , latent_dim=128):
+    def __init__(self ,opts , spatial = 32 , latent_dim=128):
         super(VAE, self).__init__()
         self.encoder_list = nn.ModuleList()
         self.decoder_list = nn.ModuleList()
+        self.opts = opts
         encoder_channel =[3, spatial, spatial*2, latent_dim]
         decoder_channel =[latent_dim, spatial*2, spatial, 3]
         # Encoder architecture
