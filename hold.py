@@ -1,2 +1,4 @@
-import os
-print(os.getcwd())
+import torch
+print(torch.__version__)
+import torchvision
+print(torchvision.__version__)

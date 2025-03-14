@@ -71,6 +71,8 @@ class Coach(object):
             print("something went wrong on loading")
 
     def teach(self):
+        total_loss_dict = defaultdict(lambda : [])
+        total_loss_val_dict = defaultdict(lambda : [])
         for epoch in range(self.opts.epoches) :
             print(f"---------{epoch=}----------")
             # configure the asving methode later
@@ -91,6 +93,7 @@ class Coach(object):
             print("train_losses")
             for k , v in epoch_loss_dict.items():
                 print(f"{k} = {torch.mean(torch.tensor(v,dtype=torch.float32))}")
+                total_loss_dict[k].append(torch.mean(torch.tensor(v,dtype=torch.float32)))
             
             # validation_phase
             for i, (clean_image , noisy_image) in tqdm(enumerate(self.train_dataloader , start=1),total= (self.train_dataloader)):
@@ -104,14 +107,16 @@ class Coach(object):
             print("val_losses")
             for k , v in epoch_val_loss_dict.items():
                 print(f"{k} = {torch.mean(torch.tensor(v,dtype=torch.float32))}")
+                total_loss_val_dict[k].append(torch.mean(torch.tensor(v,dtype=torch.float32)))
 
-            # saving weigths
-            try:
-                print(f"saving weigths in {self.opts.save_weigth_path}")
-                self.save_weigths()
-            except:
-                print("didn't provide saving path")
-                sys.exit()
+
+        # saving weigths
+        try:
+            print(f"saving weigths in {self.opts.save_weigth_path}")
+            self.save_weigths(total_loss_dict , total_loss_val_dict)
+        except:
+            print("didn't provide saving path")
+            sys.exit()
 
     def calc_loss(self , output_image , target_image):
         loss_dict = defaultdict(lambda:[])
@@ -158,12 +163,14 @@ class Coach(object):
     def test_single(self):
         pass
     
-    def save_weigths(self , loss_dict):
+    def save_weigths(self , loss_dict, loss_val_dic):
         saving_path = self.opts.save_weigth_path if self.opts.save_weigth_path else os.path.join(os.getcwd() , "Saved_Models")
         os.makedirs(saving_path , exist_ok=True)
         try:
             model_state_dict = self.net.state_dict()
-            loss_map = get_visual_map(loss_dict)
+            loss_map = get_visual_map(loss_dict , os.path.join(saving_path , "loss_map.png"))
+            loss_val_map = get_visual_map(loss_val_dic , os.path.join(saving_path , "loss_val_map.png"))
+            torch.save(model_state_dict , os.path.join(saving_path , self.opts.model.replace("-" , "_") + "weight.pt"))
         except:
             print(f"failed at saving model and loss-map in {saving_path}")
 

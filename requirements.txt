@@ -1,0 +1,9 @@
+torch
+torchvision
+pillow
+open-cv
+torchsummary
+numpy
+pandas
+matplotlib
+pytorch_mssim
