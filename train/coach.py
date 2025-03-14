@@ -1,6 +1,8 @@
 
 import os,sys,argparse
 from tqdm import tqdm
+from collections import defaultdict
+
 import torch
 import torch.nn as nn
 from PIL import Image
@@ -10,10 +12,12 @@ from Dataset.datasets import Noisy_Cifar100 , Noisy_STL10
 from Dataset.augmentation import Augmentation
 from config.path_config import *
 from models.networks import Unet,VAE
-from utils.common import *
-from torch.optim import Adam
+from utils.common import compute_total_variation , denormalize_image ,get_visual_map
+
+# losses
 import torch.nn.functional as F
-from collections import defaultdict
+from  pytorch_msssim import ssim
+
 
 class Coach(object):
     def __init__(self , opts):
@@ -51,7 +55,7 @@ class Coach(object):
         elif self.opts.model == "VAE":
             return VAE(self.opts)
 
-    def  configurate_dataset(self):
+    def configurate_dataset(self):
         if self.opts.dataset == "Cifar100":
             return Noisy_Cifar100()
         elif self.opts.dataset == "STL10":
@@ -62,7 +66,7 @@ class Coach(object):
             if self.opts.load_weigth_path:
                 ckpt = torch.load(self.opts.load_weigth_path, map_location="cpu")
                 self.net.load_state_dict(state_dict=ckpt , strict=False)
-            print("weigths successfully loaded")
+                print("weigths successfully loaded")
         except:
             print("something went wrong on loading")
 
@@ -110,17 +114,58 @@ class Coach(object):
                 sys.exit()
 
     def calc_loss(self , output_image , target_image):
-        if self.opts.model == "U-net"
-        pass
+        loss_dict = defaultdict(lambda:[])
+        loss = 0
+        if self.opts.model == "U-net":
+            # reconstruction loss
+            reconstruciton_loss = F.l1_loss(input=output_image , target=target_image)
+            loss_dict["reconstruciton_loss"].append(reconstruciton_loss)
+            loss +=  self.opts.lambda_reconstruction * reconstruciton_loss
+            
+            # ssim loss
+            ssim_loss = 1- ssim(output_image , target_image)
+            loss_dict["ssim_loss"].append(ssim_loss)
+            loss +=  self.opts.lambda_ssim * ssim_loss
+
+            # total_variation loss
+            tv_loss = compute_total_variation(output_image)
+            loss_dict["tv_loss"].append(ssim_loss)
+            loss +=  self.opts.lambda_total_variation * ssim_loss
+        elif self.opts.mdoel == "VAE":
+            output_image , mean , log_variance = output_image
+            # reconstruction loss
+            reconstruciton_loss = F.l1_loss(input=output_image , target=target_image)
+            loss_dict["reconstruciton_loss"].append(reconstruciton_loss)
+            loss +=  self.opts.lambda_reconstruction * reconstruciton_loss
+            
+            # ssim loss
+            ssim_loss = 1- ssim(output_image , target_image)
+            loss_dict["ssim_loss"].append(ssim_loss)
+            loss +=  self.opts.lambda_ssim * ssim_loss
+
+            # total_variation loss
+            tv_loss = compute_total_variation(output_image)
+            loss_dict["tv_loss"].append(ssim_loss)
+            loss +=  self.opts.lambda_total_variation * tv_loss
+
+            # KL Divergence loss
+            kl_loss = -0.5 * torch.sum(log_variance - mean**2  - torch.exp(log_variance))
+            loss_dict["kl_loss"].append(ssim_loss)
+            loss +=  self.opts.lambda_kl * kl_loss
+
+        loss , loss_dict
     
     def test_single(self):
         pass
     
-    def save_weigths(self):
-        pass
-
-    def load_weigths(self):
-        pass
+    def save_weigths(self , loss_dict):
+        saving_path = self.opts.save_weigth_path if self.opts.save_weigth_path else os.path.join(os.getcwd() , "Saved_Models")
+        os.makedirs(saving_path , exist_ok=True)
+        try:
+            model_state_dict = self.net.state_dict()
+            loss_map = get_visual_map(loss_dict)
+        except:
+            print(f"failed at saving model and loss-map in {saving_path}")
 
     def eval(self):
         self.net.eval()

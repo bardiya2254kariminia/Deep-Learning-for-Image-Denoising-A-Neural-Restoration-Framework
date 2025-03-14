@@ -19,3 +19,11 @@ def load_json(json_path:str):
     with open(json_path ,"r") as f:
         data = json.load(f)
     return data
+
+def compute_total_variation(image : torch.Tensor):  # image = (batch,C,H,W)
+    H_smoothing = torch.abs(image[:,:,:-1,:] - image[:,:,1:,:])
+    W_smoothing = torch.abs(image[:,:,:,:-1] - image[:,:,:,1:])
+    return torch.mean(H_smoothing) + torch.mean(W_smoothing)
+
+def get_visual_map(loss_dict):
+    pass

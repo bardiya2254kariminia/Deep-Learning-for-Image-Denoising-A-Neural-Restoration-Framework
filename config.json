@@ -12,5 +12,9 @@
     "model" : "U-net",
     "load_weigth_path": null,
     "save_weigth_path": null,
-    "dataset" : "STL10"
+    "dataset" : "STL10",
+    "lambda_reconstruction" : 0.2,
+    "lambda_ssim" : 0.1,
+    "lambda_total_variation": 0.1,
+    "lambda_kl": 0.1
 }

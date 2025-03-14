@@ -154,7 +154,7 @@ class VAE(nn.Module):
         decoded_z = self.fc_upsample(z).view((-1 ,128,16,16))
         # decodding phase
         out = self.decoder(decoded_z)
-        return out
+        return (out , mean , log_variance)
 
 
 if __name__ == "__main__":
