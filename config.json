@@ -10,5 +10,7 @@
     "b2": 0.99,
     "weight_decay" : 1e-3,
     "model" : "U-net",
-    "load_weigth_path": null 
+    "load_weigth_path": null,
+    "save_weigth_path": null,
+    "dataset" : "STL10"
 }
