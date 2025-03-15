@@ -26,12 +26,11 @@ class Coach(object):
         self.load_net_weigths()
         if self.opts.mode == "train":
             # optimizers
-            self.optimizer = Adam(params=self.net.parameters(),
+            self.optimizer = torch.optim.Adam(params=self.net.parameters(),
                                 betas=(self.opts.b1 , self.opts.b2),
                                 lr=self.opts.learning_rate,
-                                weight_decay=self.opts.weigth_decay)
-            # criterions
-            self.l1_loss = F.l1_loss()
+                                # weight_decay=self.opts.weigth_decay
+                                )
             # Dataloader & Dattset
             self.dataset = self.configurate_dataset()
             self.train_dataset , self.val_dataset = random_split(dataset=self.dataset ,

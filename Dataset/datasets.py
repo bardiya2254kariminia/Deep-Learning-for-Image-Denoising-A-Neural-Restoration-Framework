@@ -14,10 +14,9 @@ from config.transform_config import Transform_class
 
 # implementation of datasets
 class Noisy_Cifar100(Dataset):
-    def __init__(self , noise_std = 0.1):
-        super(self,Noisy_Cifar100).__init__()
+    def __init__(self):
+        super(Noisy_Cifar100, self).__init__()
         self.cifar = CIFAR100(root="./data", train=True, download=True)
-        self.noise_std = noise_std
 
     def __len__(self):
         return len(self.cifar)
@@ -25,15 +24,13 @@ class Noisy_Cifar100(Dataset):
     def __getitem__(self, index):
         image , label = self.cifar[index]
         clean_image = Transform_class.get_transform()["cifar100_transform"](image)
-        noisy_image= clean_image + torch.rand_like(clean_image) * self.noise_std
-        noisy_image = Transform_class.get_transform()["cifar100_transform"](noisy_image)
+        noisy_image = Transform_class.get_transform()["cifar100_noisy_transform"](noisy_image)
         return clean_image , noisy_image
 
 class Noisy_STL10(Dataset):
-    def __init__(self , noise_std = 0.1):
-        super(self,Noisy_STL10).__init__()
-        self.cifar = STL10(root="./data", train=True, download=True)
-        self.noise_std = noise_std
+    def __init__(self ):
+        super(Noisy_STL10,self).__init__()
+        self.cifar = STL10(root="./data", split="test", download=True)
 
     def __len__(self):
         return len(self.cifar)
@@ -41,6 +38,10 @@ class Noisy_STL10(Dataset):
     def __getitem__(self, index):
         image , label = self.cifar[index]
         clean_image = Transform_class.get_transform()["cifar100_transform"](image)
-        noisy_image= clean_image + torch.rand_like(clean_image) * self.noise_std
-        noisy_image = Transform_class.get_transform()["cifar100_transform"](noisy_image)
+        noisy_image = Transform_class.get_transform()["cifar100_noisy_transform"](noisy_image)
         return clean_image , noisy_image
+    
+
+if __name__ == "__main__":
+    ds =  Noisy_Cifar100()
+    print(ds.__len__())
