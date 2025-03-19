@@ -54,4 +54,5 @@ the loss map for U-net model is depicted as follow:
 > ![](pictures/loss_map_unet.png)
 
 and the outputs for the input images are:
->
+> ![](pictures/ouputs.png)
+> caption: note that the  output  for each noise is below  of the  inputted noisy image. 
