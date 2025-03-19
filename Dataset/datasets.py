@@ -24,7 +24,7 @@ class Noisy_Cifar100(Dataset):
     def __getitem__(self, index):
         image , label = self.cifar[index]
         clean_image = Transform_class.get_transform()["cifar100_transform"](image)
-        noisy_image = Transform_class.get_transform()["cifar100_noisy_transform"](noisy_image)
+        noisy_image = Transform_class.get_transform()["cifar100_noisy_transform"](image)
         return clean_image , noisy_image
 
 class Noisy_STL10(Dataset):
@@ -38,7 +38,7 @@ class Noisy_STL10(Dataset):
     def __getitem__(self, index):
         image , label = self.cifar[index]
         clean_image = Transform_class.get_transform()["cifar100_transform"](image)
-        noisy_image = Transform_class.get_transform()["cifar100_noisy_transform"](noisy_image)
+        noisy_image = Transform_class.get_transform()["cifar100_noisy_transform"](image)
         return clean_image , noisy_image
     
 

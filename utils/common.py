@@ -24,7 +24,7 @@ def load_json(json_path:str):
 def compute_total_variation(image : torch.Tensor):  # image = (batch,C,H,W)
     H_smoothing = torch.abs(image[:,:,:-1,:] - image[:,:,1:,:])
     W_smoothing = torch.abs(image[:,:,:,:-1] - image[:,:,:,1:])
-    return torch.mean(H_smoothing) + torch.mean(W_smoothing)
+    return (torch.mean(H_smoothing) + torch.mean(W_smoothing))/ (image.shape[-1]**2)
 
 def get_visual_map(loss_dict, save_path):
     colors = plt.cm.viridis(np.linspace(0 , 1, len(loss_dict)))

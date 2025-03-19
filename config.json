@@ -1,5 +1,5 @@
 {
-    "mode" : "train",
+    "mode" : "test",
     "epoches": 30,
     "batch_size": 4,
     "learning_rate": 0.01,
@@ -10,7 +10,7 @@
     "b2": 0.99,
     "weight_decay" : 1e-3,
     "model" : "U-net",
-    "load_weigth_path": null,
+    "load_weigth_path": "/home/bardiya/projects/ai-side-projects/Deep-Learning-for-Image-Denoising-A-Neural-Restoration-Framework/debugging/Saved_Models/U_netweight.pt",
     "save_weigth_path": null,
     "dataset" : "STL10",
     "lambda_reconstruction" : 0.2,

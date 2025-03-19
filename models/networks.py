@@ -26,7 +26,7 @@ class Unet_Convblock(nn.Module):
             )
         )
         self.body_list.add_module(
-            "leakyrelu_1" , nn.LeakyReLU(0.2)
+            "relu_1" , nn.ReLU()
         )
         self.body_list.add_module(
             "conv_2" , nn.Conv2d(
@@ -37,7 +37,7 @@ class Unet_Convblock(nn.Module):
             )
         )
         self.body_list.add_module(
-            "leakyrelu_2" , nn.LeakyReLU(0.2)
+            "relu_2" , nn.ReLU()
         )
         self.body = nn.Sequential(*self.body_list)
     
